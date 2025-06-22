@@ -8,6 +8,6 @@ def index():
     return render_template('index.html')
 
 @dashboard_bp.route('/dashboard')
-#@login_required
+@login_required
 def dashboard():
     return render_template('dashboard.html')
