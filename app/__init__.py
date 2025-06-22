@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from dotenv import load_dotenv
+from config import Config
 import os
 
 db = SQLAlchemy()
@@ -10,8 +11,8 @@ login_manager = LoginManager()
 def create_app():
     load_dotenv()
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
+    app.config.from_object(Config)
+
 
     db.init_app(app)
 
