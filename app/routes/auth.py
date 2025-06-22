@@ -10,14 +10,14 @@ def register():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-        name = request.form.get('name')
+        username = request.form.get('username')
 
         if user_services.get_user_by_email(email):
             flash('Email ja cadastrado.', 'danger')
             return render_template('register.html')
 
         hashed_password = generate_password_hash(password)
-        user_services.create_user(email=email, password=hashed_password, name=name)
+        user_services.create_user(email=email, password=hashed_password, username=username)
         flash('Cadastro realizado com sucesso! Realize o login.', 'success')
         return redirect(url_for('auth.login'))
 
@@ -27,13 +27,13 @@ def register():
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        email = request.form.get("email")
+        username = request.form.get("username")
         password = request.form.get("password")
-        user = user_services.get_user_by_email
+        user = user_services.get_user_by_username(username)
 
         if user and check_password_hash(user.password, password):
             login_user(user)
-            return redirect(url_for("dashboard.dashboard"))
+            return redirect(url_for("main.dashboard"))
         flash("Credenciais invalidas", "danger")
 
     return render_template("login.html")

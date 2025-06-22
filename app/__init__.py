@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from dotenv import load_dotenv
 from config import Config
+
 import os
 
 db = SQLAlchemy()
@@ -13,10 +14,9 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-
     db.init_app(app)
 
-    from app.models import user
+    from app.models.user import User
 
     login_manager.init_app(app)
 
@@ -27,6 +27,6 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        return User.query.get(user_id)
 
     return app
