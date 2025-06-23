@@ -1,4 +1,3 @@
-<!-- app/templates/historia_usuario_list.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,15 +19,15 @@
             </div>
           {% endif %}
         {% endwith %}
-        <a href="{{ url_for('historia_usuario.criar_historia') }}" class="btn btn-success mb-3">Nova História</a>
+        <a href="{{ url_for('historia_usuario.route_criar_historia') }}" class="btn btn-success mb-3">Nova História</a>
         <div class="card">
             <ul class="list-group list-group-flush">
                 {% for historia in historias %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <span>{{ historia.titulo }}</span>
                         <div>
-                            <a href="{{ url_for('historia_usuario.editar_historia', id=historia.id) }}" class="btn btn-sm btn-primary">Editar</a>
-                            <form action="{{ url_for('historia_usuario.deletar_historia', id=historia.id) }}" method="post" class="d-inline">
+                            <a href="{{ url_for('historia_usuario.route_editar_historia', id=historia.id) }}" class="btn btn-sm btn-primary">Editar</a>
+                            <form action="{{ url_for('historia_usuario.route_deletar_historia', id=historia.id) }}" method="post" class="d-inline">
                                 <button type="submit" class="btn btn-sm btn-danger">Deletar</button>
                             </form>
                         </div>

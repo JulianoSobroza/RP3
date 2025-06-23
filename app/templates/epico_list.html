@@ -1,4 +1,3 @@
-<!-- app/templates/epico_list.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,15 +19,15 @@
             </div>
           {% endif %}
         {% endwith %}
-        <a href="{{ url_for('epico.criar_epico') }}" class="btn btn-success mb-3">Novo Épico</a>
+        <a href="{{ url_for('epico.route_criar_epico') }}" class="btn btn-success mb-3">Novo Épico</a>
         <div class="card">
             <ul class="list-group list-group-flush">
                 {% for epico in epicos %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <span>{{ epico.titulo }}</span>
                         <div>
-                            <a href="{{ url_for('epico.editar_epico', id=epico.id) }}" class="btn btn-sm btn-primary">Editar</a>
-                            <form action="{{ url_for('epico.deletar_epico', id=epico.id) }}" method="post" class="d-inline">
+                            <a href="{{ url_for('epico.route_editar_epico', id=epico.id) }}" class="btn btn-sm btn-primary">Editar</a>
+                            <form action="{{ url_for('epico.route_deletar_epico', id=epico.id) }}" method="post" class="d-inline">
                                 <button type="submit" class="btn btn-sm btn-danger">Deletar</button>
                             </form>
                         </div>
