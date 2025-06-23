@@ -17,6 +17,13 @@ def create_app():
     db.init_app(app)
 
     from app.models.user import User
+    from app.models.produto import Produto
+    from app.models.persona import Persona
+    from app.models.epico import Epico
+    from app.models.historia_usuario import HistoriaUsuario
+    from app.models.requisito import Requisito
+    from app.models.backlog import Backlog
+    from app.models.revisao import Revisao
 
     login_manager.init_app(app)
 
