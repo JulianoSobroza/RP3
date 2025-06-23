@@ -1,46 +1,103 @@
-from flask import Blueprint, render_template, redirect, url_for, request,flash
-from flask_login import login_user, login_required, logout_user, current_user, LoginManager
-from werkzeug.security import generate_password_hash, check_password_hash
-from app.services import user_services
+from flask import Blueprint, request, jsonify
+from app.services.auth_service import AuthService, token_required, get_current_user
+from app.services.llm_log_service import LLMLogService
+from datetime import datetime
 
 auth_bp = Blueprint('auth', __name__)
 
-@auth_bp.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-        username = request.form.get('username')
-
-        if user_services.get_user_by_email(email):
-            flash('Email ja cadastrado.', 'danger')
-            return render_template('register.html')
-
-        hashed_password = generate_password_hash(password)
-        user_services.create_user(email=email, password=hashed_password, username=username)
-        flash('Cadastro realizado com sucesso! Realize o login.', 'success')
-        return redirect(url_for('auth.login'))
-
-    return render_template('register.html')
-
-
-@auth_bp.route("/login", methods=["GET", "POST"])
+@auth_bp.route('/login', methods=['POST'])
 def login():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-        user = user_services.get_user_by_username(username)
+    """
+    Realiza login do usuário.
 
-        if user and check_password_hash(user.password, password):
-            login_user(user)
-            return redirect(url_for("main.dashboard"))
-        flash("Credenciais invalidas", "danger")
+    Body JSON:
+    {
+        "username": "string",
+        "password": "string"
+    }
+    """
+    dados = request.get_json()
 
-    return render_template("login.html")
+    if not dados or 'username' not in dados:
+        return jsonify({'erro': 'Username é obrigatório'}), 400
 
+    # Por simplicidade, não verificamos senha nesta versão de demonstração
+    resultado = AuthService.login(dados['username'], dados.get('password', ''))
 
-@login_required
-@auth_bp.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('main.index'))
+    return jsonify(resultado), 200
+
+@auth_bp.route('/verify-token', methods=['GET'])
+@token_required
+def verificar_token():
+    """Verifica se o token é válido."""
+    user = get_current_user()
+    return jsonify({
+        'valido': True,
+        'user': user.to_dict()
+    })
+
+@auth_bp.route('/logs/llm', methods=['GET'])
+@token_required
+def obter_logs_llm():
+    """
+    Obtém logs de LLM do usuário atual.
+
+    Query params:
+    - limite: número máximo de logs (padrão: 50)
+    - produto_id: filtrar por produto específico
+    - tipo_operacao: filtrar por tipo de operação
+    """
+    user = get_current_user()
+    limite = request.args.get('limite', 50, type=int)
+    produto_id = request.args.get('produto_id', type=int)
+    tipo_operacao = request.args.get('tipo_operacao')
+
+    if produto_id:
+        logs = LLMLogService.obter_logs_produto(produto_id, limite)
+    elif tipo_operacao:
+        logs = LLMLogService.obter_logs_por_tipo(tipo_operacao, limite)
+    else:
+        logs = LLMLogService.obter_logs_usuario(user.id, limite)
+
+    return jsonify({
+        'logs': [log.to_dict() for log in logs]
+    })
+
+@auth_bp.route('/logs/llm/estatisticas', methods=['GET'])
+@token_required
+def obter_estatisticas_llm():
+    """
+    Obtém estatísticas de uso do LLM.
+
+    Query params:
+    - produto_id: filtrar por produto específico
+    - data_inicio: data de início (formato: YYYY-MM-DD)
+    - data_fim: data de fim (formato: YYYY-MM-DD)
+    """
+    user = get_current_user()
+    produto_id = request.args.get('produto_id', type=int)
+    data_inicio_str = request.args.get('data_inicio')
+    data_fim_str = request.args.get('data_fim')
+
+    data_inicio = None
+    data_fim = None
+
+    try:
+        if data_inicio_str:
+            data_inicio = datetime.strptime(data_inicio_str, '%Y-%m-%d')
+        if data_fim_str:
+            data_fim = datetime.strptime(data_fim_str, '%Y-%m-%d')
+    except ValueError:
+        return jsonify({'erro': 'Formato de data inválido. Use YYYY-MM-DD'}), 400
+
+    estatisticas = LLMLogService.obter_estatisticas_uso(
+        usuario_id=user.id,
+        produto_id=produto_id,
+        data_inicio=data_inicio,
+        data_fim=data_fim
+    )
+
+    return jsonify({
+        'estatisticas': estatisticas
+    })
+
