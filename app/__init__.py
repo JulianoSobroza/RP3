@@ -29,8 +29,13 @@ def create_app():
 
     from .routes.auth import auth_bp
     from .routes.dashboard import dashboard_bp
+    from .routes.produto import produto_bp
+    from .routes.backlog import backlog_bp
+
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
+    app.register_blueprint(produto_bp)
+    app.register_blueprint(backlog_bp)
 
     @login_manager.user_loader
     def load_user(user_id):

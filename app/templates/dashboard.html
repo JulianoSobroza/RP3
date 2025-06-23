@@ -8,8 +8,17 @@
 <body class="bg-light">
 
     <div class="container py-4">
-        <h2 class="mb-4">📊 Dashboard de Prompts Enviados</h2>
-
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>📊 Dashboard de Prompts Enviados</h2>
+            <div>
+                <a href="/criar_produto" class="btn btn-primary me-2">Novo Produto</a>
+                {% if produto_id %}
+                    <a href="{{ url_for('backlog.backlog', produto_id=produto_id) }}" class="btn btn-outline-success">Ver Backlogs</a>
+                {% else %}
+                    <span class="text-muted">Nenhum produto cadastrado</span>
+                {% endif %}
+            </div>
+        </div>
         <div class="table-responsive bg-white shadow rounded p-3">
             <table class="table table-hover table-bordered align-middle">
                 <thead class="table-light">

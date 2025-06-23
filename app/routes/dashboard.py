@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template
 from flask_login import login_required
+from app.models.produto import Produto
 
 dashboard_bp = Blueprint('main', __name__)
 
@@ -10,4 +11,9 @@ def index():
 @dashboard_bp.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+
+    produto = Produto.query.first()
+    produto_id = produto.id if produto else None
+
+    logs = []
+    return render_template('dashboard.html', logs=logs, produto_id=produto_id)
