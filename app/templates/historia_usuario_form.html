@@ -1,0 +1,48 @@
+<!-- app/templates/historia_usuario_form.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Formulário de História de Usuário</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h1 class="mb-4">{{ 'Editar' if historia else 'Nova' }} História de Usuário</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="mb-3">
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+        <form method="post" class="card p-4 shadow-sm">
+            <div class="mb-3">
+                <label for="titulo" class="form-label">Título:</label>
+                <input type="text" id="titulo" name="titulo" class="form-control" value="{{ historia.titulo if historia else '' }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="descricao" class="form-label">Descrição:</label>
+                <textarea id="descricao" name="descricao" class="form-control">{{ historia.descricao if historia else '' }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="epico_id" class="form-label">Épico:</label>
+                <select id="epico_id" name="epico_id" class="form-select" required>
+                    {% for epico in epicos %}
+                        <option value="{{ epico.id }}"
+                            {% if historia and historia.epico_id == epico.id %}selected{% endif %}>
+                            {{ epico.titulo }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a href="{{ url_for('historia_usuario.listar_historias') }}" class="btn btn-secondary ms-2">Voltar</a>
+        </form>
+    </div>
+</body>
+</html>
