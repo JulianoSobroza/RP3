@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Geração de Histórias de Usuário</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+  <h3 class="mb-4">3. Geração de Histórias de Usuário</h3>
+
+  <!-- Card principal -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-secondary text-white fw-bold">Geração com LLM</div>
+    <div class="card-body">
+      <label for="prompt">Prompt Customizado:</label>
+      <textarea id="prompt" class="form-control mb-3" rows="2">Como [persona], quero [...], para que [...].</textarea>
+      <button class="btn btn-outline-primary">Gerar Histórias com LLM</button>
+    </div>
+  </div>
+
+  <!-- Lista de histórias -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span class="fw-bold">Histórias Geradas</span>
+      <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#promptModal">
+        <i class="bi bi-tools"></i> Editar Prompt
+      </button>
+    </div>
+    <div class="card-body">
+      <div class="list-group">
+        <div class="list-group-item">
+          <div class="d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">Como PO, quero gerar histórias com IA para acelerar o planejamento.</h6>
+            <div>
+              <button class="btn btn-sm btn-outline-success me-2">✓ Aprovar</button>
+              <button class="btn btn-sm btn-outline-warning">✏ Editar</button>
+            </div>
+          </div>
+        </div>
+        <div class="list-group-item">
+          <div class="d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">Como dev, quero receber histórias bem estruturadas, para codar mais rápido.</h6>
+            <div>
+              <button class="btn btn-sm btn-outline-success me-2">✓ Aprovar</button>
+              <button class="btn btn-sm btn-outline-warning">✏ Editar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botão de retorno -->
+  <a href="/dashboard" class="btn btn-secondary">← Voltar à Dashboard</a>
+</div>
+
+<!-- Modal para editar prompt -->
+<div class="modal fade" id="promptModal" tabindex="-1" aria-labelledby="promptModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="promptModalLabel">Editar Prompt</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <label for="promptEdit">Prompt:</label>
+        <textarea id="promptEdit" class="form-control" rows="3">Como [persona], quero [...], para que [...].</textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="document.getElementById('prompt').value = document.getElementById('promptEdit').value">Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

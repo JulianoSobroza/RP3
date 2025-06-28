@@ -31,13 +31,15 @@ def create_app():
     from .routes.dashboard import dashboard_bp
     from .routes.produto import produto_bp
     from .routes.backlog import backlog_bp
-    from .routes.chat import chat_bp
+    from .routes.gpt import gpt_bp
+
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(produto_bp)
     app.register_blueprint(backlog_bp)
-    app.register_blueprint(chat_bp)
+    app.register_blueprint(gpt_bp)
+
 
     @login_manager.user_loader
     def load_user(user_id):

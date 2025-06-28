@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>ChatGPT Bot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #chat-box { height: 400px; overflow-y: auto; background: #f8f9fa; padding: 1rem; border-radius: 8px; }
+        .user-msg { text-align: right; color: #0d6efd; }
+        .bot-msg { text-align: left; color: #198754; }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container py-5">
+    <div class="card shadow p-4 mx-auto" style="max-width: 600px;">
+        <h2 class="mb-4 text-center">ChatGPT Bot</h2>
+        <div id="chat-box" class="mb-3"></div>
+        <form id="chatgpt-form" autocomplete="off">
+            <div class="input-group">
+                <input type="text" id="user-input" class="form-control" placeholder="Digite sua mensagem..." required>
+                <button class="btn btn-primary" type="submit">Enviar</button>
+            </div>
+        </form>
+        <a href="/" class="btn btn-link mt-3 w-100">Voltar</a>
+    </div>
+</div>
+<script>
+document.getElementById('chatgpt-form').onsubmit = async function(e) {
+    e.preventDefault();
+    const input = document.getElementById('user-input');
+    const msg = input.value.trim();
+    if (!msg) return;
+    const chatBox = document.getElementById('chat-box');
+    chatBox.innerHTML += `<div class="user-msg"><strong>Você:</strong> ${msg}</div>`;
+    input.value = '';
+    chatBox.scrollTop = chatBox.scrollHeight;
+    const resp = await fetch('/mensagem', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({message: msg})
+    });
+    const data = await resp.json();
+    chatBox.innerHTML += `<div class="bot-msg"><strong>ChatGPT:</strong> ${data.response}</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+};
+</script>
+</body>
+</html>

@@ -16,4 +16,5 @@ def dashboard():
     produto_id = produto.id if produto else None
 
     logs = []
-    return render_template('dashboard.html', logs=logs, produto_id=produto_id)
+    return render_template('dashboard/0dashboard.html', logs=logs, produto_id=produto_id)
+
