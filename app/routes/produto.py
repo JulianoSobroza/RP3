@@ -45,7 +45,7 @@ def criar_produto():
             'produto': produto.to_dict()
         }), 201
     flash('Produto criado com sucesso!', 'success')
-    return redirect(url_for('main.dashboard'))
+    return redirect(url_for('dashboard.dashboard'))
 
 @produto_bp.route('/produtos', methods=['GET'])
 @handle_errors

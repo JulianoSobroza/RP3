@@ -1,0 +1,33 @@
+<!-- Exibe e permite editar as informações do produto selecionado -->
+<div class="container mt-4">
+    <h3 class="mb-4">1. Produto - Visualizar e Editar</h3>
+    {% if produto %}
+    <form method="POST" action="/produtos/{{ produto.id }}/editar">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Nome</label>
+                <input type="text" name="nome" class="form-control" value="{{ produto.nome }}" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Canais/Plataformas</label>
+                <input type="text" name="canais" class="form-control" value="{{ produto.canais }}">
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Descrição</label>
+            <textarea name="descricao" class="form-control" rows="2">{{ produto.descricao }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Personas Envolvidas</label>
+            <input type="text" class="form-control" value="{{ produto.personas or '' }}" name="personas" placeholder="Ex: Product Owner, Desenvolvedor">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Proposta de Valor</label>
+            <textarea name="proposta_valor" class="form-control" rows="2">{{ produto.proposta_valor }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-success">Salvar Alterações</button>
+    </form>
+    {% else %}
+    <div class="alert alert-warning">Nenhum produto selecionado.</div>
+    {% endif %}
+</div>
