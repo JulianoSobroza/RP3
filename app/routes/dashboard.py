@@ -25,4 +25,4 @@ def inicio_produto(produto_id):
 @login_required
 def criar_produto():
     # Apenas renderiza o formulário, o POST é tratado pelo produto_bp
-    return render_template('dashboard/criar_produto.html')
+    return render_template('dashboard/criar_novo_produto.html')
