@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Criar Produto</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="card shadow p-4" style="min-width: 350px;">
+            <h2 class="mb-4 text-center">Novo Produto</h2>
+            <form method="POST" action="/produtos">
+                <div class="mb-3">
+                    <label for="nome" class="form-label">Nome do Produto:</label>
+                    <input type="text" id="nome" name="nome" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="descricao" class="form-label">Descrição:</label>
+                    <textarea id="descricao" name="descricao" class="form-control"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="proposta_valor" class="form-label">Proposta de Valor:</label>
+                    <input type="text" id="proposta_valor" name="proposta_valor" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="canais" class="form-label">Canais:</label>
+                    <input type="text" id="canais" name="canais" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-success w-100">Criar Produto</button>
+            </form>
+            <a href="/dashboard" class="btn btn-link mt-3 w-100">Voltar para Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    {% if produto %}
+    <nav class="col-md-2 sidebar d-flex flex-column p-3">
+      <h5 class="mb-4">Navegação</h5>
+      <ul class="nav nav-pills flex-column" id="dashboardTabs" role="tablist">
+        <li class="nav-item mb-1" role="presentation">
+          <button class="nav-link active" id="tab-produto" data-bs-toggle="tab" data-bs-target="#produto" type="button" role="tab" aria-controls="produto" aria-selected="true">1. Produto</button>
+        </li>
+        <li class="nav-item mb-1" role="presentation">
+          <button class="nav-link" id="tab-epicos" data-bs-toggle="tab" data-bs-target="#epicos" type="button" role="tab" aria-controls="epicos" aria-selected="false">2. Épicos</button>
+        </li>
+        <li class="nav-item mb-1" role="presentation">
+          <button class="nav-link" id="tab-historias" data-bs-toggle="tab" data-bs-target="#historias" type="button" role="tab" aria-controls="historias" aria-selected="false">3. Histórias</button>
+        </li>
+        <li class="nav-item mb-1" role="presentation">
+          <button class="nav-link" id="tab-requisitos" data-bs-toggle="tab" data-bs-target="#requisitos" type="button" role="tab" aria-controls="requisitos" aria-selected="false">4. Requisitos</button>
+        </li>
+        <li class="nav-item mb-1" role="presentation">
+          <button class="nav-link" id="tab-backlog" data-bs-toggle="tab" data-bs-target="#backlog" type="button" role="tab" aria-controls="backlog" aria-selected="false">5. Backlog</button>
+        </li>
+        <li class="nav-item mb-1" role="presentation">
+          <button class="nav-link" id="tab-historico" data-bs-toggle="tab" data-bs-target="#historico" type="button" role="tab" aria-controls="historico" aria-selected="false">6. Histórico</button>
+        </li>
+      </ul>
+    </nav>
+    {% endif %}
+
+    <main class="col-md-10 p-4">
+      <h2 class="mb-4">Dashboard do Produto: {{ produto.nome if produto else 'Selecione um produto' }}</h2>
+      {% if produto %}
+      <!-- Seções em abas Bootstrap -->
+      <div class="tab-content" id="dashboardTabsContent">
+        <div class="tab-pane fade show active" id="produto" role="tabpanel" aria-labelledby="tab-produto">
+          {% include "dashboard/1produto.html" %}
+        </div>
+        <div class="tab-pane fade" id="epicos" role="tabpanel" aria-labelledby="tab-epicos">
+          {% include "dashboard/2gerar_epicos.html" %}
+        </div>
+        <div class="tab-pane fade" id="historias" role="tabpanel" aria-labelledby="tab-historias">
+          {% include "dashboard/3gerar_historias_usuario.html" %}
+        </div>
+        <div class="tab-pane fade" id="requisitos" role="tabpanel" aria-labelledby="tab-requisitos">
+          {% include "dashboard/4gerar_req_func.html" %}
+        </div>
+        <div class="tab-pane fade" id="backlog" role="tabpanel" aria-labelledby="tab-backlog">
+          {% include "dashboard/5backlog_gerado" %}
+        </div>
+        <div class="tab-pane fade" id="historico" role="tabpanel" aria-labelledby="tab-historico">
+          {% include "dashboard/6historico_revisoes.html" %}
+        </div>
+      </div>
+      {% else %}
+      <p>Selecione ou crie um produto para continuar.</p>
+      {% endif %}
+    </main>
+  </div>
+</div>
+
+
+{% block scripts %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}
