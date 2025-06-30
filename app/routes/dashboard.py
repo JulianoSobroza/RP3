@@ -18,11 +18,11 @@ def dashboard():
 @login_required
 def inicio_produto(produto_id):
     produto = ProdutoService.obter_produto_por_id(produto_id)
-    return render_template('dashboard/inicio.html', produto=produto)
+    return render_template('dashboard/inicio_produto.html', produto=produto)
 
 
 @dashboard_bp.route('/criar_produto')
 @login_required
 def criar_produto():
     # Apenas renderiza o formulário, o POST é tratado pelo produto_bp
-    return render_template('dashboard/1produto.html')
+    return render_template('dashboard/criar_produto.html')
