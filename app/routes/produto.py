@@ -30,7 +30,7 @@ def criar_produto():
         if request.is_json:
             return jsonify({'erro': 'Nome do produto é obrigatório'}), 400
         flash('Nome do produto é obrigatório', 'danger')
-        return render_template('criar_produto.html')
+        return render_template('criar_novo_produto.html')
 
     produto = ProdutoService.criar_produto(
         nome=dados['nome'],
@@ -181,4 +181,4 @@ def obter_estatisticas_produto(produto_id):
 
 @produto_bp.route('/criar_produto', methods=['GET'])
 def criar_produto_form():
-    return render_template('criar_produto.html')
+    return render_template('criar_novo_produto.html')
