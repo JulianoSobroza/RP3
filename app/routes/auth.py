@@ -33,7 +33,7 @@ def login():
 
         if user and check_password_hash(user.password, password):
             login_user(user)
-            return redirect(url_for("main.dashboard"))
+            return redirect(url_for("dashboard.dashboard"))
         flash("Credenciais invalidas", "danger")
 
     return render_template("login.html")
@@ -43,4 +43,4 @@ def login():
 @auth_bp.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('main.index'))
+    return redirect(url_for('dashboard.index'))
