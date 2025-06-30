@@ -4,6 +4,9 @@ from app.services.epico_services import (
     listar_epicos, criar_epico, buscar_epico, editar_epico, deletar_epico
 )
 
+from openai import OpenAI
+
+
 # Cria um Blueprint para as rotas de épico
 epico_bp = Blueprint('epico', __name__)
 
@@ -47,3 +50,24 @@ def route_editar_epico(id):
 def route_deletar_epico(id):
     deletar_epico(id)
     return redirect(url_for('epico.route_listar_epicos'))
+
+@epico_bp.route("/mensagem", methods=["POST"])
+def mensagem():
+    data = request.get_json()
+    user_message = data.get('message', '')
+    if not user_message:
+        return jsonify({'response': 'Mensagem vazia.'}), 400
+
+    api_key = current_app.config.get("OPENAI_API_KEY")
+    client = OpenAI(api_key=api_key)
+
+    try:
+        completion = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": user_message}]
+        )
+        answer = completion.choices[0].message.content.strip()
+    except Exception as e:
+        return jsonify({'response': f'Erro ao acessar OpenAI: {e}'}), 500
+
+    return jsonify({'response': answer})

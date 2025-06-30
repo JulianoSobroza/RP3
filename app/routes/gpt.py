@@ -28,3 +28,4 @@ def mensagem():
         return jsonify({'response': f'Erro ao acessar OpenAI: {e}'}), 500
 
     return jsonify({'response': answer})
+

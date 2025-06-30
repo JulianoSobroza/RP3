@@ -18,7 +18,7 @@ def dashboard():
 @login_required
 def inicio_produto(produto_id):
     produto = ProdutoService.obter_produto_por_id(produto_id)
-    return render_template('dashboard/inicio_produto.html', produto=produto)
+    return render_template('dashboard/0base_produto.html', produto=produto)
 
 
 @dashboard_bp.route('/criar_produto')
