@@ -2,35 +2,206 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Geração de Épicos</title>
+  <title>Geração de Épicos com IA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
 <div class="container mt-5">
-  <h3 class="mb-4">2. Geração de Épicos</h3>
+    <h3 class="mb-4">2. Geração de Épicos</h3>
 
-  <div class="card shadow-sm mb-4">
-    <div class="card-header bg-secondary text-white fw-bold">Geração de Épicos</div>
-    <div class="card-body">
-      <button class="btn btn-outline-primary mb-3">Gerar Épicos com LLM</button>
+    <div class="card shadow-sm">
+      <div class="card-header bg-dark text-white fw-bold">
+        Gerar Hierarquia de Épicos com IA
+      </div>
+      <div class="card-body">
 
-      <ul class="list-group">
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          Como PO, quero cadastrar produtos...
-          <span class="badge bg-info">Rascunho</span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          Como PO, quero gerar backlog automaticamente...
-          <span class="badge bg-warning text-dark">Em revisão</span>
-        </li>
-      </ul>
+        <div class="mb-3">
+          <label for="promptEpico" class="form-label">
+            <strong>Descreva o produto ou projeto:</strong>
+          </label>
+          <textarea class="form-control" id="promptEpico" rows="4" placeholder="Ex: Um aplicativo de delivery para uma pizzaria local."></textarea>
+        </div>
+
+        <button type="button" class="btn btn-primary" id="gerarEpicoBtn">
+          <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+          <span id="btnText"><i class="bi bi-magic"></i> Gerar Épicos</span>
+        </button>
+
+        <hr class="my-4">
+
+        <div>
+          <h5 class="mb-3">Resultados Gerados:</h5>
+          <div id="area-resultados-llm">
+            <div class="list-group">
+                </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <a href="#" class="btn btn-secondary mt-4">← Voltar à Dashboard</a>
+</div>
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel">Editar Épico</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editForm">
+          <div class="mb-3">
+            <label for="editEpicoTitulo" class="form-label">Título do Épico</label>
+            <input type="text" class="form-control" id="editEpicoTitulo" required>
+          </div>
+          <div class="mb-3">
+            <label for="editEpicoDescricao" class="form-label">Descrição</label>
+            <textarea class="form-control" id="editEpicoDescricao" rows="4" required></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="saveEditBtn">Salvar Alterações</button>
+      </div>
     </div>
   </div>
-
-  <a href="/dashboard" class="btn btn-secondary">← Voltar à Dashboard</a>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // --- SELEÇÃO DE ELEMENTOS ---
+    const gerarEpicoBtn = document.getElementById('gerarEpicoBtn');
+    const promptTextarea = document.getElementById('promptEpico');
+    const resultadosArea = document.getElementById('area-resultados-llm');
+    const editModalEl = document.getElementById('editModal');
+    const editModal = new bootstrap.Modal(editModalEl);
+    const saveEditBtn = document.getElementById('saveEditBtn');
+    let itemSendoEditado = null;
+
+    // --- GERAÇÃO DE ÉPICOS (CHAMADA À IA) ---
+    gerarEpicoBtn.addEventListener('click', async () => {
+        const userMessage = promptTextarea.value.trim();
+        if (!userMessage) {
+            alert('Por favor, descreva o produto ou projeto.');
+            return;
+        }
+        toggleLoading(true);
+        try {
+            const response = await fetch("{{ url_for('epico.route_gerar_epicos_llm') }}", {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ message: userMessage }),
+            });
+            const data = await response.json();
+
+            // ### BLOCO MODIFICADO PARA LIDAR COM MÚLTIPLOS ÉPICOS ###
+            if (response.ok) {
+                // Limpa resultados anteriores antes de adicionar os novos
+                resultadosArea.querySelector('.list-group').innerHTML = '';
+
+                const respostaCompleta = data.response;
+                const epicos = respostaCompleta.split('---'); // Separa em um array de épicos
+
+                // Itera sobre cada épico e o adiciona na tela
+                epicos.forEach(textoDoEpico => {
+                    if (textoDoEpico.trim() !== '') {
+                        const epicoHtml = criarElementoEpico(textoDoEpico.trim());
+                        resultadosArea.querySelector('.list-group').insertAdjacentHTML('beforeend', epicoHtml);
+                    }
+                });
+
+                promptTextarea.value = '';
+            } else {
+                alert(`Erro do servidor: ${data.error}`);
+            }
+            // ### FIM DO BLOCO MODIFICADO ###
+
+        } catch (error) {
+            console.error('Erro de rede:', error);
+            alert('Não foi possível se conectar ao servidor.');
+        } finally {
+            toggleLoading(false);
+        }
+    });
+
+    // --- DELEÇÃO E EDIÇÃO (DELEGAÇÃO DE EVENTOS) ---
+    resultadosArea.addEventListener('click', (event) => {
+        const target = event.target;
+        const deleteButton = target.closest('.btn-delete');
+        const editButton = target.closest('.btn-edit');
+        if (deleteButton) handleDelete(deleteButton);
+        if (editButton) handleEdit(editButton);
+    });
+
+    // --- LÓGICA DO MODAL DE EDIÇÃO ---
+    saveEditBtn.addEventListener('click', () => {
+        const novoTitulo = editModalEl.querySelector('#editEpicoTitulo').value;
+        const novaDescricao = editModalEl.querySelector('#editEpicoDescricao').value;
+        if (itemSendoEditado) {
+            itemSendoEditado.querySelector('.fw-bold').textContent = `Épico: ${novoTitulo}`;
+            itemSendoEditado.querySelector('.text-muted').innerHTML = novaDescricao.replace(/\n/g, '<br>');
+        }
+        editModal.hide();
+        itemSendoEditado = null;
+    });
+
+    // --- FUNÇÕES AUXILIARES ---
+    function handleDelete(button) {
+        if (confirm('Tem certeza que deseja excluir este épico?')) {
+            button.closest('.list-group-item').remove();
+        }
+    }
+    function handleEdit(button) {
+        itemSendoEditado = button.closest('.list-group-item');
+        const tituloAtual = itemSendoEditado.querySelector('.fw-bold').textContent.replace('Épico: ', '');
+        const descricaoAtual = itemSendoEditado.querySelector('.text-muted').innerHTML.replace(/<br\s*\/?>/gi, '\n');
+        editModalEl.querySelector('#editEpicoTitulo').value = tituloAtual;
+        editModalEl.querySelector('#editEpicoDescricao').value = descricaoAtual;
+        editModal.show();
+    }
+
+    function criarElementoEpico(responseText) {
+        let titulo = 'Título não gerado corretamente';
+        let descricao = 'A descrição não foi fornecida no formato esperado.';
+        const textoLimpo = responseText.replace(/^Épico:\s*/i, '');
+        if (textoLimpo.includes('\n')) {
+            const partes = textoLimpo.split('\n', 2);
+            titulo = partes[0];
+            descricao = partes[1];
+        } else {
+            titulo = textoLimpo;
+        }
+        return `
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="me-3">
+                    <div class="fw-bold">Épico: ${titulo}</div>
+                    <p class="mb-1 text-muted">${descricao.replace(/\n/g, '<br>')}</p>
+                </div>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-secondary btn-sm btn-edit" title="Editar"><i class="bi bi-pencil-fill"></i></button>
+                    <button type="button" class="btn btn-outline-danger btn-sm btn-delete" title="Deletar"><i class="bi bi-trash-fill"></i></button>
+                </div>
+            </div>`;
+    }
+
+    function toggleLoading(isLoading) {
+        const spinner = gerarEpicoBtn.querySelector('.spinner-border');
+        const btnText = gerarEpicoBtn.querySelector('#btnText');
+        gerarEpicoBtn.disabled = isLoading;
+        spinner.classList.toggle('d-none', !isLoading);
+        btnText.textContent = isLoading ? ' Gerando...' : '';
+        if (!isLoading) {
+          btnText.innerHTML = '<i class="bi bi-magic"></i> Gerar Épicos';
+        }
+    }
+</script>
 
 </body>
 </html>

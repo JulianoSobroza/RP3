@@ -21,7 +21,18 @@ def mensagem():
     try:
         completion = client.chat.completions.create(
             model="gpt-4o-mini",
-            messages=[{"role": "user", "content": user_message}]
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "Você é um especialista em metodologias ágeis e engenharia de requisitos. "
+                        "Seu trabalho é analisar informações de projeto e gerar uma hierarquia clara e coerente de Épicos. "
+                        "Os Épicos devem refletir objetivos estratégicos do produto, cobrir áreas funcionais importantes, "
+                        "e permitir que histórias de usuário sejam organizadas sob eles. Responda com uma estrutura hierárquica numerada ou indentada."
+                    )
+                },
+                {"role": "user", "content": user_message}
+            ]
         )
         answer = completion.choices[0].message.content.strip()
     except Exception as e:
