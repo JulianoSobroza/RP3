@@ -34,12 +34,16 @@ def create_app():
     from .routes.gpt import gpt_bp
 
 
+    from .routes.epico import epico_bp
+    from .routes.historia_usuario import historia_usuario_bp
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(produto_bp)
     app.register_blueprint(backlog_bp)
     app.register_blueprint(gpt_bp)
 
+    app.register_blueprint(epico_bp)
+    app.register_blueprint(historia_usuario_bp)
 
     @login_manager.user_loader
     def load_user(user_id):
